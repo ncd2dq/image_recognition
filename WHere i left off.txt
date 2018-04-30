@@ -1,0 +1,8 @@
+brain has a NN class and DataCleaner class that can be trained and can load images
+
+
+--> now i need to be able to take a batch of images in a folder and store their pixel row vectors into 1 array
+that will be recieved as the inpt by the NN
+
+
+np.vstack(ALL PICTURE PIXEL ROW VECTORS)

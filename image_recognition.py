@@ -14,7 +14,7 @@ DataCleaner.data = np array
 Images are 125x125
 '''
 
-network = NN((125*125, 290, 290, 3))
+network = NN((125*125, 290, 290, 10))
 dataCleaner = DataCleaner()
 
 # create testing data
@@ -27,24 +27,55 @@ extra_two = dataCleaner.load_img('C:/Users/Nick/Desktop/image_recognition/number
 test_data = np.vstack((test_data, extra_two))
 
 # load images from the number_pictures directory folder
-for i in range(3):
-    if i == 0:
-        for j in range(5):
-            path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/nine_{}.png'.format(str(j+1))
-            test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
-    if i == 1:
-        for j in range(5):
-            path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/two_{}.png'.format(str(j+1))
-            test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
-    if i == 1:
-        for j in range(5):
-            path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/six_{}.png'.format(str(j+1))
-            test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
+for j in range(5):
+    path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/zero_{}.png'.format(str(j+1))
+    test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
+
+    path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/one_{}.png'.format(str(j+1))
+    test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
+
+    path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/two_{}.png'.format(str(j+1))
+    test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
+
+    path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/three_{}.png'.format(str(j+1))
+    test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
+
+    path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/four_{}.png'.format(str(j+1))
+    test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
+    
+    path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/five_{}.png'.format(str(j+1))
+    test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
+
+    path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/six_{}.png'.format(str(j+1))
+    test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
+
+    path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/seven_{}.png'.format(str(j+1))
+    test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
+
+    path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/eight_{}.png'.format(str(j+1))
+    test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
+
+    path = 'C:/Users/Nick/Desktop/image_recognition/number_pictures/nine_{}.png'.format(str(j+1))
+    test_data = np.vstack((test_data, dataCleaner.load_img(path,image_matrix=False, normalize=True, in_place=False)))
 
 #[two, six, nine]
-# 9 2 6 9 9 9 9 9 2 2 2 2 2 6 6 6 6 6
-data_labels = np.array([[0,0,1], [1,0,0], [0,0,1], [0,0,1], [0,0,1], [0,0,1], [0,0,1], [1,0,0], [1,0,0], [1,0,0], [1,0,0], [1,0,0], [0,1,0], [0,1,0], [0,1,0], [0,1,0], [0,1,0]])
+# 9 2 0,1,2,3,4,5,6,7,8,9
+def create_data_labels(digits, frequency):
+    insert_position = 0
 
+    data_labels = np.zeros((digits * frequency, digits))
+    for i in range(digits):
+        for j in range(frequency):
+            data_labels[i * frequency + j][insert_position] = 1
+        insert_position += 1
+    return data_labels
+
+data_labels = create_data_labels(10, 5) 
+
+additional_labels = np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 1], [0, 0, 1, 0, 0, 0, 0, 0, 0, 0]])
+data_labels = np.vstack((additional_labels, data_labels))
+
+'''
 # Initial Guess
 guess_two =  dataCleaner.load_img('C:/Users/Nick/Desktop/image_recognition/number_pictures/guess_two.png',
     image_matrix=False, normalize=True, in_place=False)
@@ -64,10 +95,12 @@ print("Should be a [1,0,0]: ", guess1)
 print("\nShould be a [0,0,1]: ", guess2)
 print("Should be a [1,0,0]: ", guess3)
 print("\nShould be a [0,0,1]: ", guess4)
+'''
 
 # Train the Network
-network.train(test_data, data_labels, epocs=10000, LR=0.0005, error_print_interval=1000)
+network.train(test_data, data_labels, epocs=16000, LR=0.0003, error_print_interval=2000)
 
+'''
 # Educated Guess
 guess1 = network.predict(guess_two)
 guess2 = network.predict(guess_nine)
@@ -78,3 +111,4 @@ print("Should be a [1,0,0]: ", guess1)
 print("\nShould be a [0,0,1]: ", guess2)
 print("Should be a [1,0,0]: ", guess3)
 print("\nShould be a [0,0,1]: ", guess4)
+'''
